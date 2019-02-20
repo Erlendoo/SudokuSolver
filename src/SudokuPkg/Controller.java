@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -31,6 +33,9 @@ public class Controller implements Initializable {
     GameBoard gameBoard;
     int player_selected_row;
     int player_selected_col;
+    int row, col;
+
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1){
@@ -42,12 +47,12 @@ public class Controller implements Initializable {
 
     }
 
-    public void drawOnCanvas(GraphicsContext context){
+    public void makeGrid(GraphicsContext context){
 
         context.clearRect(0,0,456,456);
         context.setFill(Color.WHITE);
         context.fillRect(3,3,450,450);
-        int row, col;
+
 
         for(row=0; row<9; row++){
             for(col=0; col<9; col++){
@@ -57,7 +62,6 @@ public class Controller implements Initializable {
                 int sub_pos_x = col * 150 + 3;
                 int width = 50;
 
-
                 context.setStroke(Color.BLACK);
                 context.setLineWidth(1);
                 //context.fillRect(position_x, position_y, width, width);
@@ -66,15 +70,12 @@ public class Controller implements Initializable {
                     context.setLineWidth(3);
                     context.strokeRect(sub_pos_x, sub_pos_y, width * 3, width * 3);
                 }
-
-
-
             }
         }
 
-        context.setStroke(Color.RED);
-        context.setLineWidth(5);
-        context.strokeRect(player_selected_col * 50 + 5, player_selected_row * 50 + 5, 46, 46);
+    }
+
+    public void fillInitialNumbers(GraphicsContext context){
 
         int[][] initial = gameBoard.getInitial();
         for(row=0; row<9; row++){
@@ -88,21 +89,69 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+    public void playerInput(GraphicsContext context){
+
+        context.setStroke(Color.RED);
+        context.setLineWidth(5);
+        context.strokeRect(player_selected_col * 50 + 5, player_selected_row * 50 + 5, 46, 46);
 
         int[][] player = gameBoard.getPlayer();
+        int[][] init = gameBoard.getInitial();
+
+
+
         for (row=0; row<9; row++){
             for (col=0; col<9; col++){
                 int position_y = row * 50 + 35;
                 int position_x = col * 50 + 23;
                 context.setFill(Color.PURPLE);
                 context.setFont(new Font(20));
-                if (player[row][col] != 0){
+                if (player[row][col] != 0 && init[row][col] == 0){
                     context.fillText(player[row][col] + "", position_x, position_y);
                 }
             }
         }
+    }
+
+    public void winScreen(GraphicsContext context){
+
+        if(gameBoard.checkForSuccessGeneral() == true) {
+
+
+            //context.clearRect(0, 0, 456, 456);
+            context.setFill(Color.GREEN);
+            context.setFont(new Font(70));
+            context.fillText("SUCCESS!", 80, 250);
+        }
+    }
+
+
+    public void drawOnCanvas(GraphicsContext context){
+
+        makeGrid(context);
+        fillInitialNumbers(context);
+        playerInput(context);
+        winScreen(context);
+
+
 
     }
+
+   /* public void inputKeyboard(){
+
+        EventHandler handler = new EventHandler(<InputEvent>() {
+
+            public void handle(InputEvent event) {
+                System.out.println("Handling event " + event.getEventType());
+                event.consume();
+            }
+    }*/
+
+    /*public void keyTyped(KeyEvent keyEvent){
+        System.out.println(keyEvent.getCode());
+    }*/
 
     public void canvasMouseClicked(){
 

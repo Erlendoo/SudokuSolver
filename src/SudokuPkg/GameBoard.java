@@ -26,7 +26,16 @@ public class GameBoard {
         // 0's will be rendered as empty space and will be editable by player
         initial = new int[][]
                 {
-                        {0,0,0,4,0,0,0,9,0},
+                        {5,3,8,4,6,1,7,9,2},
+                        {6,9,7,3,2,5,8,1,4},
+                        {2,1,4,7,8,9,5,6,3},
+                        {9,4,1,2,7,8,6,3,5},
+                        {7,6,2,1,5,3,9,4,8},
+                        {8,5,3,9,4,6,1,2,7},
+                        {3,8,9,5,1,2,4,7,6},
+                        {4,2,6,8,9,7,3,5,1},
+                        {1,7,5,6,3,4,2,8,9}
+                        /*{0,0,0,4,0,0,0,9,0},
                         {6,0,7,0,0,0,8,0,4},
                         {0,1,0,7,0,9,0,0,3},
                         {9,0,1,0,7,0,0,3,0},
@@ -34,7 +43,7 @@ public class GameBoard {
                         {0,5,0,0,4,0,1,0,7},
                         {3,0,0,5,0,2,0,7,0},
                         {4,0,6,0,0,0,3,0,1},
-                        {0,7,0,0,0,4,0,0,0}
+                        {0,7,0,0,0,4,0,0,0}*/
                 };
 
         // player's array is initialized as a 9x9 full of zeroes
@@ -64,4 +73,99 @@ public class GameBoard {
             System.out.println("Value passed to player falls out of range");
     }
 
+    public boolean checkForSuccess(){
+
+        for (int row = 0; row<9; row++){
+            for (int col = 0; col<9; col++){
+                if(initial[row][col] == 0){
+                    if(player[row][col] != solution[row][col]){
+                        return false;
+                    }
+                }
+
+
+            }
+        }
+        return true;
+    }
+
+
+    public boolean checkForSuccessGeneral() {
+        // combine the initial and player arrays
+        // instantiate a 9x9 array filled with 0's;
+        int[][] combined = new int[9][9];
+        // fill it up with the combination of initial number and player answers
+        for(int row = 0; row < 9; row++) {
+            for(int col = 0; col <9; col++) {
+                // if there's a valid number in the initial array
+                if(initial[row][col]!=0) {
+                    // add it at the same position in the combined one
+                    combined[row][col] = initial[row][col];
+                    // if there isn't
+                } else {
+                    // add from the same position in the player array
+                    combined[row][col] = player[row][col];
+                }
+            }
+        }
+        // check if the sum of the numbers in each row is
+        // equal to 45 (the sum of numbers from 1 to 9)
+        for(int row = 0; row<9; row++) {
+            //for that row, create a sum variable
+            int sum = 0;
+            // add all the numbers from a row
+            for(int col = 0; col<9; col++) {
+                sum = sum + combined[row][col];
+            }
+            // if the sum isn't 45, then the row is invalid, invalidating
+            // the whole solution
+            if(sum!=45) {
+                return false;
+            }
+        }
+
+        // check if the sum of the numbers in each column is
+        // equal to 45 (the sum of numbers from 1 to 9)
+        for(int col = 0; col<9; col++) { // note that the for loops are switched around
+            //for that column, create a sum variable
+            int sum = 0;
+            // add all the numbers from a column
+            for(int row = 0; row<9; row++) {
+                sum = sum + combined[row][col];
+            }
+            // if the sum isn't 45, then the column is invalid, invalidating
+            // the whole solution
+            if(sum!=45) {
+                return false;
+            }
+        }
+
+        // check if the sum of the numbers in each 3x3 unique square
+        // on the 9x9 board sums to 45 (the sum of num)
+        // we are going to create an offset of 3 squares for each check
+
+        // increment the row offset with 3 each time
+        for (int row_offset = 0; row_offset < 9; row_offset+=3) {
+            // increment the col offset with 3 each time
+            for(int col_offset = 0; col_offset <9; col_offset+=3) {
+                // for each 3x3 cluster, create a sum variable
+                int sum = 0;
+                // add all numbers from a cluster of 3x3
+                for (int row = 0; row < 3; row++) {
+
+                    for (int col = 0; col < 3; col++) {
+                        sum = sum + combined[row + row_offset][col + col_offset];
+                    }
+                }
+                // if the sum isn't 45, then the 3x3 cluster is invalid,
+                // invalidating the whole solution
+                if(sum!=45) {
+                    return false;
+                }
+            }
+        }
+        // if none of the checks have triggered a return false statement,
+        // fly the all-clear and return true
+        return true;
+    }
 }
