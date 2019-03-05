@@ -1,0 +1,6 @@
+Sudoku board java tutorial:
+https://github.com/jcollard/captaincoder/tree/master/Java/sudoku-javafx
+
+Solver algorithm:
+https://www.baeldung.com/java-sudoku
+
